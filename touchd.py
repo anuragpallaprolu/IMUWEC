@@ -6,13 +6,17 @@
 import os
 import cv2 as opencv
 import numpy as np
+from scipy import optimize
 from scipy import signal
 from scipy.fftpack import fft, fftshift
-img = cv2.imread("somefile.png")
-intensity = np.zeros(512,512)
-i,j=0
-for i,j in range(1,512):
-    intensity[i,j] = img[i,j,0]
+img = opencv.imread("drawing.png")
+#opencv.imshow('image',img)
+intensity = np.zeros((512,512))
+i=0
+j=0
+for i in range(1,512):
+    for j in range(1,512):
+        intensity[i,j] = img[i,j,0]
 
 #intensity matrix calculated
 
@@ -21,18 +25,43 @@ for i,j in range(1,512):
 gauss_x = signal.gaussian(30,std=7.5)
 gauss_y = signal.gaussian(30,std=7.5)
 
-gauss_2d = np.zeros(30,30)
+gauss_2d = np.zeros((30,30))
 for i in range(1,30):
     for j in range(1,30):
         gauss_2d[i,j]=gauss_x[i]+gauss_y[j]
 
+
+unit_2d = np.zeros((512,512))
+for i in range(1,512):
+    for j in range(1,512):
+        if i > 30 or j > 30:
+            unit_2d[i,j]=0
+        else:
+            unit_2d[i,j]=1
+    
+    
 #we need to write a minimizing routine
+p_sum = np.zeros((30,30))
 
-def E(u,v):
-    global gauss_2d, intensity
-    for i,j in range(1,30):
-        p_sum[i,j] = gauss_2d[i,j]*((intensity[i+u,j+v] - intensity[u,v])^2)
-        t_sum = t_sum + p_sum[i,j]
-    return t_sum
+#def t_sum(u,v):
+#    return 0
 
-print E(1,2)
+#def E(u,v):
+#    global gauss_2d, intensity
+#t_sum_new = t_sum(5,3)
+for i in range(1,30):
+    for j in range(1,30):
+        p_sum[i,j] = unit_2d[i,j]*((intensity[i+5,j+3] - intensity[5,3])**2)
+        print p_sum[i,j]
+       # t_sum_new = t_sum_new + p_sum[i,j]
+    
+#    return t_sum_new
+
+#print E(1,1)
+#Why write one when you can basinhop!
+#x0 = np.matrix('2 5')
+#x1 = np.matrix('3 4')
+#E_op_result = optimize.basinhopping(E,x0,x1)
+#print E_op_result.x
+#print E_op_result.success
+#print E_op_result.status
