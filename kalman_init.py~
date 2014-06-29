@@ -1,0 +1,20 @@
+﻿#!/usr/bin/python
+'''
+
+'''
+from numpy import *
+from pylab import *
+import scipy
+from scipy.integrate import quad
+from scipy.integrate import simps
+
+data_theta_dot = genfromtxt("gyrox_n.txt")
+data_theta = genfromtxt("theta_x_n.txt")
+time = data_theta_dot[:,0]
+theta_dot = data_theta_dot[:,1]
+theta = data_theta[:,1]
+
+print theta[2]
+
+
+
